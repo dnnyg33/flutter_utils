@@ -3,29 +3,18 @@
 import 'dart:io';
 
 class FileUtils {
-  /// Resolves the consumer project root.
+  /// Resolves the consumer project root as an absolute path.
   ///
   /// Resolution order:
-  ///   1. `CONSUMER_CWD` env var (set by `flutter_utils:create_wizard`) —
-  ///      returned as-is (absolute path).
-  ///   2. Walk up from CWD looking for a directory literally named [rootDir].
-  ///      If found, return a relative `../../...` prefix back to it.
-  ///   3. Walk up from CWD looking for a `pubspec.yaml` whose top-level
-  ///      `workspace:` key exists — returned as an absolute path.
+  ///   1. `CONSUMER_CWD` env var (set by `flutter_utils:create_wizard`).
+  ///   2. Walk up from CWD looking for a `pubspec.yaml` with a top-level
+  ///      `workspace:` key.
   ///
-  /// [rootDir] is kept for backwards compatibility but is only used by the
-  /// fallback in step (2).
+  /// [rootDir] is unused and kept only so existing callers compile.
   static String relativeToRootPathPrefix(String rootDir) {
     final consumerCwd = Platform.environment['CONSUMER_CWD'];
     if (consumerCwd != null && consumerCwd.isNotEmpty) {
       return consumerCwd;
-    }
-
-    final directoryParts = Directory.current.path.split('/');
-    final projectRootIndex = directoryParts.indexOf(rootDir);
-    if (projectRootIndex >= 0) {
-      final afterRootCount = directoryParts.length - projectRootIndex - 1;
-      return List.generate(afterRootCount, (_) => '..').join('/');
     }
 
     final workspaceRoot = _findWorkspaceRoot(Directory.current);
