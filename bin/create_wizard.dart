@@ -3,9 +3,27 @@ import 'dart:isolate';
 import 'package:prompts/prompts.dart' as prompts;
 import 'package:recase/recase.dart';
 
-/// Captured at startup so script invocations can write into the consumer's
-/// working directory even after shell scripts `cd` elsewhere.
-final String _consumerCwd = Directory.current.absolute.path;
+/// The consumer's workspace root — the nearest ancestor of CWD whose
+/// pubspec.yaml has a top-level `workspace:` key. Falls back to CWD if
+/// none is found.
+final String _consumerCwd = _findWorkspaceRoot(Directory.current.absolute) ??
+    Directory.current.absolute.path;
+
+String? _findWorkspaceRoot(Directory start) {
+  Directory current = start;
+  while (true) {
+    final pubspec = File('${current.path}/pubspec.yaml');
+    if (pubspec.existsSync()) {
+      final content = pubspec.readAsStringSync();
+      if (RegExp(r'^workspace\s*:', multiLine: true).hasMatch(content)) {
+        return current.path;
+      }
+    }
+    final parent = current.parent;
+    if (parent.path == current.path) return null;
+    current = parent;
+  }
+}
 
 /// Resolves to the flutter_utils package root (directory containing
 /// pubspec.yaml). Works for pub-cache, git, and path dependencies.
