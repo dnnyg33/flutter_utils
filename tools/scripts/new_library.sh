@@ -10,8 +10,9 @@ then
     dart pub global activate mason_cli
 fi
 
+output_root="${CONSUMER_CWD:-$(cd ../.. && pwd)}"
 cd ../mason
-mason make library_brick --library_name $library_name -o ../../packages/
+mason make library_brick --library_name $library_name -o "$output_root/packages/"
 
 #melos exec -c 2 --fail-fast --order-dependents --scope=$library_name_snake -- dart run build_runner build --delete-conflicting-outputs
 #melos bs

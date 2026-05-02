@@ -19,11 +19,12 @@ then
     dart pub global activate mason_cli
 fi
 
+output_root="${CONSUMER_CWD:-$(cd ../.. && pwd)}"
 cd ../mason
 if [ "$nest_in_subdirectory" = "true" ]; then
-  mason make bloc_brick --bloc_name_prefix $1 --package_name "$package_name" -o ../../packages/"$package_name"/lib/"$lib_subDirectory"/"$1"
+  mason make bloc_brick --bloc_name_prefix $1 --package_name "$package_name" -o "$output_root/packages/$package_name/lib/$lib_subDirectory/$1"
 else
-  mason make bloc_brick --bloc_name_prefix $1 --package_name "$package_name" -o ../../packages/"$package_name"/lib/"$lib_subDirectory"
+  mason make bloc_brick --bloc_name_prefix $1 --package_name "$package_name" -o "$output_root/packages/$package_name/lib/$lib_subDirectory"
 fi
 #
 #melos exec -c 2 --fail-fast --order-dependents --scope=$package_name --scope=add_to_app --scope=standalone -- dart run build_runner build --delete-conflicting-outputs

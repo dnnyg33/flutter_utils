@@ -1,6 +1,23 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'package:prompts/prompts.dart' as prompts;
 import 'package:recase/recase.dart';
+
+/// Captured at startup so script invocations can write into the consumer's
+/// working directory even after shell scripts `cd` elsewhere.
+final String _consumerCwd = Directory.current.absolute.path;
+
+/// Resolves to the flutter_utils package root (directory containing
+/// pubspec.yaml). Works for pub-cache, git, and path dependencies.
+Future<String> _packageRoot() async {
+  final libUri = await Isolate.resolvePackageUri(
+    Uri.parse('package:flutter_utils/'),
+  );
+  if (libUri == null) {
+    throw StateError('Could not resolve package:flutter_utils/');
+  }
+  return Directory.fromUri(libUri).parent.absolute.path;
+}
 
 Future<void> main(List<String> args) async {
   stdout.writeln('🔥 Welcome to the Fishbowl Creator\n');
@@ -116,7 +133,7 @@ Future<void> main(List<String> args) async {
 }
 
 List<String> _getAvailablePackages() {
-  final packagesDir = Directory('./packages');
+  final packagesDir = Directory('$_consumerCwd/packages');
   if (!packagesDir.existsSync()) {
     return [];
   }
@@ -141,7 +158,7 @@ List<String> _getAvailablePackages() {
 }
 
 List<String> _getAvailableFeatures(String packageName) {
-  final srcDir = Directory('./packages/$packageName/lib/src');
+  final srcDir = Directory('$_consumerCwd/packages/$packageName/lib/src');
   if (!srcDir.existsSync()) {
     return [];
   }
@@ -176,7 +193,8 @@ void _printInfo() {
 }
 
 Future<int> runFlow(Flow flow, List<String> args) async {
-  final scriptPath = './tools/scripts/${flow.shellName}';
+  final root = await _packageRoot();
+  final scriptPath = '$root/tools/scripts/${flow.shellName}';
   stdout
       .writeln('\n🚀 Running ${flow.shellName} with args: ${args.join(' ')}\n');
 
@@ -184,6 +202,8 @@ Future<int> runFlow(Flow flow, List<String> args) async {
     'sh',
     [scriptPath, ...args],
     mode: ProcessStartMode.inheritStdio,
+    environment: {'CONSUMER_CWD': _consumerCwd},
+    includeParentEnvironment: true,
   );
 
   final exitCode = await process.exitCode;
