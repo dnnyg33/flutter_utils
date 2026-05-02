@@ -14,6 +14,7 @@ fi
 
 output_root="${CONSUMER_CWD:-$(cd ../.. && pwd)}"
 cd ../mason
+mason get
 mason make package_brick --package_name $package_name -o "$output_root/packages/"
 
 #melos exec -c 2 --fail-fast --order-dependents --scope=$package_name_snake --scope=$package_name_api --scope=add_to_app --scope=standalone -- dart run build_runner build --delete-conflicting-outputs

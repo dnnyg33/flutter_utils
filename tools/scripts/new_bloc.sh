@@ -21,6 +21,7 @@ fi
 
 output_root="${CONSUMER_CWD:-$(cd ../.. && pwd)}"
 cd ../mason
+mason get
 if [ "$nest_in_subdirectory" = "true" ]; then
   mason make bloc_brick --bloc_name_prefix $1 --package_name "$package_name" -o "$output_root/packages/$package_name/lib/$lib_subDirectory/$1"
 else
