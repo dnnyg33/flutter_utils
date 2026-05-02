@@ -1,0 +1,15 @@
+name: custom_lint_rules
+description: Custom lint rules for the Fishbowl Flutter app
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  analyzer:
+  analyzer_plugin:
+  custom_lint_builder:
+
+dev_dependencies:
+  custom_lint:

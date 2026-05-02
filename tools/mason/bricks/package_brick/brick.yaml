@@ -1,0 +1,9 @@
+name: package_brick
+description: A brick that creates a new package along with a sibling api package
+version: 0.0.1
+
+vars:
+  package_name:
+    type: string
+    description: The package name
+    prompt: What is the package name?

@@ -1,0 +1,23 @@
+name: {{package_name.snakeCase()}}_api
+description: Api package for exposing {{package_name.snakeCase()}} related code.
+version: 0.0.1
+
+publish_to: "none"
+
+resolution: workspace
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  auto_route:
+  logger:
+  platform_utils:
+    path: ../platform_utils
+  universal_platform:
+  web:
+
+dev_dependencies:
+  build_runner:
+  flutter_lints:

@@ -1,0 +1,46 @@
+name: {{package_name.snakeCase()}}
+description: {{package_name.pascalCase()}} feature package for Fishbowl app.
+version: 0.0.1
+publish_to: none
+
+resolution: workspace
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  auto_route:
+  bloc:
+  collection:
+  core:
+    path: ../core
+  flutter_bloc:
+  flutter_svg:
+  freezed_annotation:
+  get_it:
+  json_annotation:
+  platform_utils:
+    path: ../platform_utils
+  sliver_tools:
+  styles:
+    path: ../styles
+
+dev_dependencies:
+  auto_route_generator:
+  bloc_test:
+  build_runner:
+  flutter_lints:
+  flutter_test:
+    sdk: flutter
+  freezed:
+  json_serializable:
+  mocktail:
+  test:
+
+flutter:
+  generate: true
+  uses-material-design: true

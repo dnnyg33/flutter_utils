@@ -1,0 +1,11 @@
+{
+  "@@locale": "en",
+  "title": "{{package_name.titleCase()}}",
+  "@title": {
+    "description": "Title for {{package_name.titleCase()}} screen"
+  },
+  "description": "{{package_name.titleCase()}} feature description",
+  "@description": {
+    "description": "Description text for {{package_name.titleCase()}} feature"
+  }
+}

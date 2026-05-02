@@ -1,0 +1,11 @@
+name: package_brick_hooks
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  mason: ^0.1.0-dev
+  yaml: ^3.1.1
+  recase: ^4.1.0
+  file_utils:
+    path: ../../file_utils

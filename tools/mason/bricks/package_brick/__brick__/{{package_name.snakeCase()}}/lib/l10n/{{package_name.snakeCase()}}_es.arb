@@ -1,0 +1,5 @@
+{
+  "@@locale": "es",
+  "title": "{{package_name.titleCase()}}",
+  "description": "Descripción de la función {{package_name.titleCase()}}"
+}

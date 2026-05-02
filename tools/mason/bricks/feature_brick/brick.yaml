@@ -1,0 +1,18 @@
+name: feature_brick
+description: A brick to create a feature using best practices and your state management of choice!
+version: 0.6.2
+repository: https://github.com/LukeMoody01/mason_bricks/tree/master/bricks/feature_brick
+
+vars:
+  feature_name:
+    type: string
+    default: my_feature
+    description: The feature name
+    prompt: What is the feature name?
+
+
+  package_name:
+    type: string
+    description: The package name
+    default: core
+    prompt: What is the package name?

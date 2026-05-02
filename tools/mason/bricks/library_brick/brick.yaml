@@ -1,0 +1,9 @@
+name: library_brick
+description: A brick that creates a new library package
+version: 0.0.1
+
+vars:
+  library_name:
+    type: string
+    description: The library name
+    prompt: What is the library name?
