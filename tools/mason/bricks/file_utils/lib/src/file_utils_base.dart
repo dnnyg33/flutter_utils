@@ -3,13 +3,56 @@
 import 'dart:io';
 
 class FileUtils {
+  /// Resolves the consumer project root.
+  ///
+  /// Resolution order:
+  ///   1. `CONSUMER_CWD` env var (set by `flutter_utils:create_wizard`) —
+  ///      returned as-is (absolute path).
+  ///   2. Walk up from CWD looking for a directory literally named [rootDir].
+  ///      If found, return a relative `../../...` prefix back to it.
+  ///   3. Walk up from CWD looking for a `pubspec.yaml` whose top-level
+  ///      `workspace:` key exists — returned as an absolute path.
+  ///
+  /// [rootDir] is kept for backwards compatibility but is only used by the
+  /// fallback in step (2).
   static String relativeToRootPathPrefix(String rootDir) {
-    final currentDirectory = Directory.current;
-    final currentPath = currentDirectory.path;
-    final directoryParts = currentPath.split('/');
+    final consumerCwd = Platform.environment['CONSUMER_CWD'];
+    if (consumerCwd != null && consumerCwd.isNotEmpty) {
+      return consumerCwd;
+    }
+
+    final directoryParts = Directory.current.path.split('/');
     final projectRootIndex = directoryParts.indexOf(rootDir);
-    final afterRootCount = directoryParts.length - projectRootIndex - 1;
-    return List.generate(afterRootCount, (_) => '..').join('/');
+    if (projectRootIndex >= 0) {
+      final afterRootCount = directoryParts.length - projectRootIndex - 1;
+      return List.generate(afterRootCount, (_) => '..').join('/');
+    }
+
+    final workspaceRoot = _findWorkspaceRoot(Directory.current);
+    if (workspaceRoot != null) {
+      return workspaceRoot.path;
+    }
+
+    throw StateError(
+      'Could not locate project root. Set CONSUMER_CWD or run mason from '
+      'inside a project containing pubspec.yaml with a workspace section.',
+    );
+  }
+
+  static Directory? _findWorkspaceRoot(Directory start) {
+    Directory current = start.absolute;
+    while (true) {
+      final pubspec = File('${current.path}/pubspec.yaml');
+      if (pubspec.existsSync()) {
+        final content = pubspec.readAsStringSync();
+        if (RegExp(r'^workspace\s*:', multiLine: true).hasMatch(content)) {
+          return current;
+        }
+      }
+      final parent = current.parent;
+      if (parent.path == current.path) return null;
+      current = parent;
+    }
   }
 
   /// Inserts content into a file after any regex matches for each line.
