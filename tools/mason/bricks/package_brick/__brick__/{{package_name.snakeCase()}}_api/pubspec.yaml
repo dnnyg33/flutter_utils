@@ -13,8 +13,8 @@ dependencies:
     sdk: flutter
   auto_route:
   logger:
-  platform_utils:
-    path: ../platform_utils
+  flutter_utils:
+    path: ../flutter_utils
   universal_platform:
   web:
 

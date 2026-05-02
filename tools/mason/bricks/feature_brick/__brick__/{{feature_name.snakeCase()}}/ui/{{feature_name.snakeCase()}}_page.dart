@@ -6,7 +6,7 @@ import 'package:{{{fullPath}}}/ui/{{feature_name.snakeCase()}}_body.dart';
 import 'package:{{package_name}}/src/{{package_name.snakeCase()}}_router.gr.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:platform_utils/platform_utils.dart';
+import 'package:flutter_utils/feature_api.dart';
 
 
 class {{feature_name.pascalCase()}}Interactions {

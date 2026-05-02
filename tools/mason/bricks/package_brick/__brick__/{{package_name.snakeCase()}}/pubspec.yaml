@@ -23,8 +23,8 @@ dependencies:
   freezed_annotation:
   get_it:
   json_annotation:
-  platform_utils:
-    path: ../platform_utils
+  flutter_utils:
+    path: ../flutter_utils
   sliver_tools:
   styles:
     path: ../styles
