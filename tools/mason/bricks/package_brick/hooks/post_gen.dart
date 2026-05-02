@@ -14,7 +14,6 @@ void run(HookContext context) async {
   //code changes
   await _deploymentImpl(packageName, root, "standalone");
   await _appRouter(packageName, root);
-  await _fishbowlApp(rc.snakeCase, root, 'standalone');
 
   //pubspec changes
   await _rootPubspec(rc.snakeCase, root);
@@ -85,25 +84,6 @@ _coreYaml(String packageName, String root) async {
   await FileUtils.insertAlphabeticallyInYamlSection(path, content, pattern);
 }
 
-_fishbowlApp(String packageName, String root, String appType) async {
-  print("Adding to deployment");
-  final rc = ReCase(packageName);
-  final path = '$root/apps/$appType/lib/fishbowl_app.dart';
-  final importStatement =
-      "import 'package:${rc.snakeCase}_api/${rc.snakeCase}_api.dart';";
-  await FileUtils.insertImport(path, importStatement);
-
-  final startPattern = RegExp(r'localizationsDelegates: \[');
-  final content = 'getApi<${rc.pascalCase}Api>().localizationsDelegate(),';
-  final endPattern = RegExp(r'\],');
-  await FileUtils.insertAlphabetically(
-    path,
-    content,
-    startPattern: startPattern,
-    endPattern: endPattern,
-  );
-}
-
 _deploymentImpl(String packageName, String root, String appName) async {
   print("Adding to apps/$appName");
   final rc = ReCase(packageName);
@@ -131,5 +111,15 @@ _deploymentImpl(String packageName, String root, String appName) async {
       final match = RegExp(r'registerApi<(\w+)>').firstMatch(line);
       return match?.group(1) ?? '';
     },
+  );
+
+  // Add localizationsDelegate to the localizationDelegates getter
+  final localizationsContent =
+      '    getApi<${rc.pascalCase}Api>().localizationsDelegate(),';
+  await FileUtils.insertAlphabetically(
+    path,
+    localizationsContent,
+    startPattern: RegExp(r'get localizationDelegates\b'),
+    endPattern: RegExp(r'\];'),
   );
 }
