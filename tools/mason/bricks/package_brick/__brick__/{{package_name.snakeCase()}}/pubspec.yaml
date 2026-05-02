@@ -24,7 +24,8 @@ dependencies:
   get_it:
   json_annotation:
   flutter_utils:
-    path: ../flutter_utils
+    git:
+      url: https://github.com/dnnyg33/flutter_utils.git
   sliver_tools:
   styles:
     path: ../styles

@@ -14,7 +14,8 @@ dependencies:
   auto_route:
   logger:
   flutter_utils:
-    path: ../flutter_utils
+    git:
+      url: https://github.com/dnnyg33/flutter_utils.git
   universal_platform:
   web:
 
