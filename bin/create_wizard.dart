@@ -19,8 +19,34 @@ Future<String> _packageRoot() async {
   return Directory.fromUri(libUri).parent.absolute.path;
 }
 
+/// Cached working copy of tools/ outside of pub-cache so mason can run
+/// `pub get` for brick hooks (pub refuses to resolve packages inside the
+/// cache).
+Directory? _cachedToolsCopy;
+Future<String> _toolsWorkingCopy() async {
+  final cached = _cachedToolsCopy;
+  if (cached != null) return cached.path;
+  final root = await _packageRoot();
+  final tmp = await Directory.systemTemp.createTemp('flutter_utils_tools_');
+  await _copyDir(Directory('$root/tools'), Directory('${tmp.path}/tools'));
+  _cachedToolsCopy = tmp;
+  return tmp.path;
+}
+
+Future<void> _copyDir(Directory src, Directory dst) async {
+  await dst.create(recursive: true);
+  await for (final entity in src.list(recursive: false, followLinks: false)) {
+    final newPath = '${dst.path}/${entity.uri.pathSegments.where((s) => s.isNotEmpty).last}';
+    if (entity is Directory) {
+      await _copyDir(entity, Directory(newPath));
+    } else if (entity is File) {
+      await entity.copy(newPath);
+    }
+  }
+}
+
 Future<void> main(List<String> args) async {
-  stdout.writeln('🔥 Welcome to the Fishbowl Creator\n');
+  stdout.writeln('🔥 Welcome to the Feature Creator\n');
 
   final flow = prompts.choose<Flow>(
     'What do you want to create?',
@@ -193,8 +219,8 @@ void _printInfo() {
 }
 
 Future<int> runFlow(Flow flow, List<String> args) async {
-  final root = await _packageRoot();
-  final scriptPath = '$root/tools/scripts/${flow.shellName}';
+  final toolsRoot = await _toolsWorkingCopy();
+  final scriptPath = '$toolsRoot/tools/scripts/${flow.shellName}';
   stdout
       .writeln('\n🚀 Running ${flow.shellName} with args: ${args.join(' ')}\n');
 
